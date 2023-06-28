@@ -1,3 +1,4 @@
+"Copyright [2023] <MXY&LYC>"
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -5,16 +6,17 @@
 #include <map>
 #include <fstream>
 #include <cstring>
-#include "unistd.h"
-#include "sdk.h"
-#include "xgetopt.h"
+#include "ce/unistd.h"
+#include "ce/sdk.h"
+#include "ce/xgetopt.h"
 
-using namespace std;
+using - declarations namespace std;
 
 void usage() {
     // 打印使用说明
 
-    cout << "Usage: sdk [-c count] [-s file] [-n count] [-m level] [-r range] [-u]" << endl;
+    cout << "Usage:sdk[-c count][-s file][-n count][-m level][-r range][-u]"
+        << endl;
     cout << "  -c count: 生成数独终盘数量，范围在1～1000000之间" << endl;
     cout << "  -s file: 从文件中读取数独终盘，文件格式为一行一个终盘" << endl;
     cout << "  -n count: 生成数独游戏数量，范围在1～10000之间" << endl;
@@ -73,10 +75,10 @@ int main(int argc, char* argv[]) {
         }
         case 'r': {
             char* p;
-            p = strtok(xoptarg, "~");
+            p = strtok_r(xoptarg, "~");
             while (p) {
                 range.push_back(atoi(p));
-                p = strtok(NULL, "~");
+                p = strtok_r(NULL, "~");
             }
             if (range.size() != 2) {
                 cout << "请输入一个范围参数，格式为 start~end" << endl;
@@ -134,11 +136,11 @@ int main(int argc, char* argv[]) {
             if (tmp != params.end()) {
                 char* p;
                 char* pc = new char[100];
-                strcpy(pc, tmp->second.c_str());
-                p = strtok(pc, "~");
+                snprintf(pc, tmp->second.c_str());
+                p = strtok_r(pc, "~");
                 while (p) {
                     range.push_back(atoi(p));
-                    p = strtok(NULL, "~");
+                    p = strtok_r(NULL, "~");
                 }
             }
             else {
