@@ -8,3 +8,121 @@ void sdk::initState()
     memset(blockUsed, 0, sizeof(blockUsed));
     result.clear();
 }
+
+//获得9以内的随机数序列
+vector<int> sdk::getRand9()
+{
+    vector<int> result;
+    set<int> usedNumbers;
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<> dis(0, 8);
+
+    while (result.size() != 9) {
+        int num = dis(gen);
+        if (usedNumbers.count(num) == 0) {
+            result.push_back(num);
+            usedNumbers.insert(num);
+        }
+    }
+    return result;
+}
+
+//生成终局数独
+Board sdk::generateBoard(int digNum)
+{
+    //使用$填充初始数独
+    vector<vector<char> > board(N, vector<char>(N, '$'));
+    
+    //使用随机生成的9以内的数字序列初始化数度中间的九宫格块
+    vector<int> row = getRand9();
+    for (int i = 0; i < 3; i++)
+    {
+        board[3][i + 3] = row[i] + '1';
+        board[4][i + 3] = row[i + 3] + '1';
+        board[5][i + 3] = row[i + 6] + '1';
+    }
+
+    //将中间的九宫格块经过一定的变换对九宫格左右与上下的九宫格进行填充
+    copyNineSquareGrid(board, 3, 3, true);
+    copyNineSquareGrid(board, 3, 3, false);
+    copyNineSquareGrid(board, 3, 0, false);
+    copyNineSquareGrid(board, 3, 6, false);
+
+    //根据所要挖的空数进行挖空
+    while (digNum)
+    {
+        int x = rand() % 9;
+        int y = rand() % 9;
+        if (board[x][y] == '$')
+            continue;
+        char tmp = board[x][y];
+        board[x][y] = '$';
+
+        //对熟读进行求解调整其难易程度
+        solveSudoku(board);
+        if (result.size() == 1)
+        {
+            digNum--;
+        }
+        else
+        {
+            board[x][y] = tmp;
+        }
+    }
+    //对数独是否合格进行检查
+    if (!checkBoard(board))
+    {
+        cout << "wrong board" << endl;
+    }
+
+    return board;
+}
+
+//九宫格块复制函数
+void sdk::copyNineSquareGrid(Board& board, int src_x, int src_y, bool isRow) {
+    int order_first[3] = { 1, 2, 0 };
+    int order_second[3] = { 2, 0, 1 };
+    if (rand() % 2 == 1) {
+        swap(order_first[0], order_second[0]);
+        swap(order_first[1], order_second[1]);
+        swap(order_first[2], order_second[2]);
+    }
+
+    for (int i = 0; i < 3; i++) {
+        if (isRow) {
+            for (int j = 0; j < 3; j++) {
+                board[src_x + j][i] = board[src_x + order_first[j]][src_y + i];
+                board[src_x + j][i+6] = board[src_x + order_second[j]][src_y + i];
+            }
+        }
+        else {
+            for (int j = 0; j < 3; j++) {
+                board[i][src_y + j] = board[src_x + i][src_y + order_first[j]];
+                board[i + 6][src_y + j] = board[src_x + i][src_y + order_second[j]];
+            }
+        }
+    }
+}
+
+//检查当前数独是否合格
+bool sdk::checkBoard(Board& board)
+{
+    initState();
+    for (int i = 0; i < 9; i++)
+    {
+        for (int j = 0; j < 9; j++)
+        {
+            if (board[i][j] != '$')
+            {
+                int digit = board[i][j] - '1';
+                if ((rowUsed[i] | columnUsed[j] | blockUsed[(i / 3) * 3 + j / 3]) & (1 << digit))
+                {
+                    return false;
+                }
+                flip(i, j, digit);
+            }
+        }
+    }
+    return true;
+}
