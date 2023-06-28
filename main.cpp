@@ -12,18 +12,6 @@
 
 using - declarations namespace std;
 
-void usage() {
-    // 打印使用说明
-
-    cout << "Usage:sdk[-c count][-s file][-n count][-m level][-r range][-u]"
-        << endl;
-    cout << "  -c count: 生成数独终盘数量，范围在1～1000000之间" << endl;
-    cout << "  -s file: 从文件中读取数独终盘，文件格式为一行一个终盘" << endl;
-    cout << "  -n count: 生成数独游戏数量，范围在1～10000之间" << endl;
-    cout << "  -m level: 生成数独游戏的难度，范围在1～3之间" << endl;
-    cout << "  -r range: 生成数独游戏的终盘数字范围，格式为 start~end" << endl;
-    cout << "  -u: 输出数独游戏的唯一解" << endl;
-}
 
 int main(int argc, char* argv[]) {
     sdk player;
@@ -96,7 +84,6 @@ int main(int argc, char* argv[]) {
             break;
         }
         default: {
-            usage();
             exit(1);
             break;
         }
@@ -110,6 +97,7 @@ int main(int argc, char* argv[]) {
             generateGame(atoi(it->second.c_str()), 0, range, outfile, player);
             range.clear();
             outfile.close();
+            cout << it->first << " Success!" << endl;
             break;
         }
         case 's': {
@@ -117,6 +105,7 @@ int main(int argc, char* argv[]) {
             boards = readFile(it->second);
             for (int i = 0; i < boards.size(); i++) {
                 vector<Board> result = player.solveSudoku(boards[i]);
+                cout << it->first << " Success!" << endl;
                 writeFile(result, outfile);
             }
             outfile.close();
@@ -165,6 +154,7 @@ int main(int argc, char* argv[]) {
             generateGame(gameNumber, gameLevel, range, outfile, player);
             range.clear();
             outfile.close();
+            cout << it->first << " Success!" << endl;
             break;
         }
         default: {
