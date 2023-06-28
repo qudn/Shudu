@@ -126,3 +126,72 @@ bool sdk::checkBoard(Board& board)
     }
     return true;
 }
+
+//解数独函数
+vector<Board> sdk::solveSudoku(Board board)
+{
+    //所有参数初始化
+    initState();
+    for (int i = 0; i < N; i++)
+    {
+        for (int j = 0; j < N; j++)
+        {
+            //对未填充的二维位置数据进行记录
+            if (board[i][j] == '$')
+            {
+                spaces.push_back(pair<int, int>(i, j));
+            }
+            else
+            {
+                //获取当前位置上的数据，并通过-1从而便于后续通过位变化改变数独坐标记录
+                int digit = board[i][j] - '1';
+                UpdateCoordinate(i, j, digit);
+            }
+        }
+    }
+    //回溯
+    DFS(board, 0);
+    return result;
+}
+
+//数独坐标填充更新
+void sdk::UpdateCoordinate(int i, int j, int digit)
+{
+    //digit的范围是0~8对应数字1~9，故而通过9个二进制位代表行列块中数据填充信息用以后续判断数独合法与否
+    rowUsed[i] ^= (1 << digit);
+    columnUsed[j] ^= (1 << digit);
+    blockUsed[(i / 3) * 3 + j / 3] ^= (1 << digit);
+}
+
+//回溯函数
+void sdk::DFS(Board& board, int pos)
+{
+    //当填充完成时将数独添加至结果存储容器中
+    if (pos == spaces.size())
+    {
+        vector<vector<char> > object(board);
+        result.push_back(object);
+        return;
+    }
+    //获取尚未填充数据的位置信息
+    int i = spaces[pos].first;
+    int j = spaces[pos].second;
+    //通过将行、列、块的数据填充信息进行或操作后取反再与0001 1111 1111掩码进行与操作，获取当前格可以进行填充的数据
+    int mask = ~(rowUsed[i] | columnUsed[j] | blockUsed[(i / 3) * 3 + j / 3]) & 0x1ff;
+    //为方便位运算，故而digit从0取起
+    int digit = 0;
+    while (mask)
+    {
+        if (mask & 1)
+        {
+            //对当前位置进行更新
+            UpdateCoordinate(i, j, digit);
+            board[i][j] = '1' + digit;
+            //回溯并再次更新位置信息
+            DFS(board, pos + 1);
+            UpdateCoordinate(i, j, digit);
+        }
+        mask = mask >> 1;
+        digit++;
+    }
+}
