@@ -1,4 +1,4 @@
-"Copyright [2023] <MXY>"
+"Copyright [2023] <MXY&LYC>"
 #include "ce/sdk.h"
 #include <set>
 #include <utility>
