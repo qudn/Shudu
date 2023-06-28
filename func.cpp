@@ -8,7 +8,9 @@
 #include <vector>
 #include <utility>
 #include <fstream>
-#include "code/shudoku.h"
+#include "ce/unistd.h"
+#include "ce/sdk.h"
+#include "ce/xgetopt.h"
 
 using std::ifstream;
 using std::ofstream;
