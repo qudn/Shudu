@@ -24,10 +24,13 @@ public:
         initState();
     }
     void initState();
-
+    Board generateBoard(int digNum);
+    void copyNineSquareGrid(Board& board, int src_x, int src_y, bool isRow);
 };
 
 vector<Board> readFile(string filePath);
 void writeFile(vector<Board> board, ofstream& f);
+
+void generateGame(int gameNumber, int gameLevel, vector<int> digNum, ofstream& outfile, sdk& player);
 
 
