@@ -34,12 +34,12 @@ class sdk {
     void initState();
 
     Board generateBoard(int digNum);
-    bool checkBoard(Board* board);
-    void copyNineSquareGrid(Board* board, int src_x, int src_y, bool isRow);
+    bool checkBoard(Board& board);
+    void copyNineSquareGrid(Board& board, int src_x, int src_y, bool isRow);
     vector<int> getRand9();
     vector<Board> solveSudoku(Board board);
     void UpdateCoordinate(int i, int j, int digit);
-    void DFS(Board* board, int pos);
+    void DFS(Board& board, int pos);
 };
 
 vector<Board> readFile(string filePath);
@@ -49,6 +49,6 @@ void generateGame(int gameNumber,
                   int gameLevel,
                   vector<int> digNum,
                   ofstream& outfile,
-                  sdk* player);
+                  sdk& player);
 
 
